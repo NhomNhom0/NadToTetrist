@@ -33,46 +33,4 @@ CHIP CPU {
 
     PARTS:
     //// Replace this comment with your code.
-
-    // outM
-    Mux16(a=instruction, b=outALU, sel=instruction[15], out=outMux1);
-
-    Not(in=instruction[15], out=notTins);
-    Or(a=notTins, b=instruction[5], out=RegAsel);
-    Register(in=outMux1, load=RegAsel, out=RegA, out[0..14]=addressM); //addressM
-
-    Mux16(a=RegA, b=inM, sel=instruction[12], out=outMux2);
-
-    And(a=instruction[4], b=instruction[15], out=RegDsel);
-    DRegister(in=outALU, load=RegDsel, out=RegD);
-
-    ALU(x=RegD, y=outMux2, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outM, out=outALU, zr=zr, ng=ng);
-
-    // writeM
-    And(a=instruction[3], b=instruction[15], out=writeM);
-
-    // pc
-    And(a=instruction[0], b=instruction[1], out=temp1); //check Uncondition Jump
-    And(a=temp1, b=instruction[2], out=uncondition); // check Unconditon Jump
-
-    Not(in=zr, out=Notzr);
-    Not(in=ng, out=Notng);
-
-    And(a=instruction[0], b=Notng, out=temp2); // check >0 Jump
-    And(a=temp2, b=Notzr, out=NotZero); // check >0 Jump
-
-    And(a=instruction[1], b=zr, out=EQLZero); // check =0 Jump
-
-    And(a=instruction[2], b=ng, out=neg); // check <0 Jump
-
-    Or(a=uncondition, b=NotZero, out=temp3); // merge 4 condition check
-    Or(a=temp3, b=EQLZero, out=temp4); // merge 4 condition check
-    Or(a=temp4, b=neg, out=Orall); // merge 4 condition check
-
-    And(a=instruction[15], b=Orall, out=load); // load
-
-    Not(in=load, out=Notload); // inc
-
-    PC(in=RegA, load=load, inc=Notload, reset=reset, out[0..14]=pc);
-
 }
