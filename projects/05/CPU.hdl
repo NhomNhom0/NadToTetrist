@@ -39,7 +39,7 @@ CHIP CPU {
 
     Not(in=instruction[15], out=notTins);
     Or(a=notTins, b=instruction[5], out=RegAsel);
-    Register(in=outMux1, load=RegAsel, out=RegA, out[0..14]=addressM); //addressM
+    ARegister(in=outMux1, load=RegAsel, out=RegA, out[0..14]=addressM); //addressM
 
     Mux16(a=RegA, b=inM, sel=instruction[12], out=outMux2);
 
