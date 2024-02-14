@@ -11,7 +11,7 @@
  * Address space rules:
  * Only the upper 16K + 8K + 1 words of the memory are used.
  * Access to address 0 to 16383 (0x0000 to 0x3FFF) results in accessing the RAM;
- * Access to address 16384 to 24575 (0x4000 to 0x5FFF) results in accessing the Screen memory map;
+ * Access to address 16384 to 24575 (x4000 to 0x5FFF) results in accessing the Screen memory map;
  * Access to address 24576 (0x6000) results in accessing the Keyboard memory map.
  */ 
 CHIP Memory {
@@ -20,4 +20,13 @@ CHIP Memory {
 
     PARTS:
     //// Replace this comment with your code.
+    DMux4Way(in=load, sel=address[13..14], a=loada, b=loadb, c=loadc, d=loadd);
+    Or(a=loada, b=loadb, out=loadram);
+
+    RAM16K(in=in, load=loadram, address=address[0..13], out=outram);
+    Screen(in=in, load=loadc, address=address[0..12], out=outscreen);
+    Keyboard(out=outkbd);
+
+    Mux4Way16(a=outram, b=outram, c=outscreen, d=outkbd, sel=address[13..14], out=out);
+
 }
